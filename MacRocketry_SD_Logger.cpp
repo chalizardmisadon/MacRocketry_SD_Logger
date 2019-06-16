@@ -36,7 +36,7 @@ bool MacRocketry_SD_Logger::openNextFile(void){
 		
 		uint16_t numNext = 0;
 		while ( //if file already exist and numNext have not reach max value
-			(SD.exists(String(fileNamePrefix) + String(numNext))) && 
+			(SD.exists(String(String(fileNamePrefix) + String(numNext)).c_str())) && 
 			(numNext < maxUInt()))
 		{
 			numNext++;
@@ -54,7 +54,7 @@ bool MacRocketry_SD_Logger::openFile(String filePath){
 			sdFile.close();   //close current file
 			delay(5);         //delay 5ms
 		}
-		sdFile = SD.open(filePath, FILE_WRITE);   //open new file for write
+		sdFile = SD.open(filePath.c_str(), FILE_WRITE);   //open new file for write
 		if (sdFile){                              //if successful
 			writeFile("start logging...");
 			return true;                            //open file successfully
