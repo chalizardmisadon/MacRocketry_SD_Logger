@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <MacRocketry_SD_Logger.h>
 #include <MacRocketry_GPS_Shield.h>
 
