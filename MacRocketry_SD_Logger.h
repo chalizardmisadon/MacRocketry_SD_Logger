@@ -9,11 +9,6 @@
 #define fileNamePrefix "file_"
 #define SD_Buffer 512
 
-//This ifdef is for ECC and Platformio to work together
-#ifndef ARDUINO //Platformio recognize ARDUINO, ECC does not
-  extern HardwareSerial Serial;
-#endif
-
 //comment out line to not log "bufferred"
 //#define Log_Bufferred
 #ifdef Log_Bufferred

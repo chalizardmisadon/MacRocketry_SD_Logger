@@ -27,8 +27,8 @@ void MacRocketry_SD_Logger::init(void){ //initialize variables to null
 
 //getters and setters --------------------------------------------------
 uint16_t MacRocketry_SD_Logger::maxUInt(void)		{ return 0xffff; } //max 16-bit number
-bool MacRocketry_SD_Logger::getConnectSD(void)	{ return connectSD; }
-bool MacRocketry_SD_Logger::getConnectFile(void){ return connectFile; }
+bool MacRocketry_SD_Logger::getConnectSD(void)		{ return connectSD; }
+bool MacRocketry_SD_Logger::getConnectFile(void)	{ return connectFile; }
 
 //file open function --------------------------------------------------
 bool MacRocketry_SD_Logger::openNextFile(void){
@@ -36,7 +36,7 @@ bool MacRocketry_SD_Logger::openNextFile(void){
 		
 		uint16_t numNext = 0;
 		while ( //if file already exist and numNext have not reach max value
-			(SD.exists(String(String(fileNamePrefix) + String(numNext)).c_str())) && 
+			(SD.exists(String(fileNamePrefix + String(numNext)).c_str())) && 
 			(numNext < maxUInt()))
 		{
 			numNext++;
