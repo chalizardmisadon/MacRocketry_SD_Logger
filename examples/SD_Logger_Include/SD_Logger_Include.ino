@@ -24,7 +24,7 @@ int i = 0;
 void loop() {
   delay(100);
 	i++;
-	if (sd.writeFile("data_" + String(i) + "\r\n"))
+	if (sd.writeBuffer("data_" + String(i) + "\r\n"))
 		Serial.println(i);
 	else Serial.println("Cannot write " + String(i));
 }
