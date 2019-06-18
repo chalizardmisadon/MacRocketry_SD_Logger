@@ -6,6 +6,10 @@ MacRocketry_GPS_Shield gps;
 
 void setup() {
 	Serial.begin(115200);
+	while(!Serial);
+
+	sd.begin();
+	
 	if (sd.getConnectSD()) Serial.println("SD recognized");
 	else Serial.println("no SD input");
 	
