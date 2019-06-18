@@ -21,25 +21,25 @@
 
 class MacRocketry_SD_Logger {
   public:
-    MacRocketry_SD_Logger(void);              //default constructor
-    MacRocketry_SD_Logger(String filePath);   //filePath
-    
-    bool openFile(String filePath);    //open file
-    bool writeFile(String data);      //write to file
-    bool writeBuffer(String data);    //faster write
-    uint16_t maxUInt(); //largest num representable by uint
+	MacRocketry_SD_Logger(void);	//default constructor
+	void begin(void);
+	void begin(String file);
+	bool openFile(String filePath);		//open file
+	bool writeFile(String data);		//write to file
+	bool writeBuffer(String data);		//faster write
+	uint16_t maxUInt(); //largest num representable by uint
 
-    bool getConnectSD(void);
-    bool getConnectFile(void);
+	bool getConnectSD(void);
+	bool getConnectFile(void);
 
   private:
-    bool connectSD, connectFile;
-    File sdFile; //File object for SD
-    
-    int16_t bufferSize;     //buffer up to 512 char
+	bool connectSD, connectFile;
+	File sdFile; //File object for SD
+	
+	int16_t bufferSize;     //buffer up to 512 char
 
-    void init();
-    bool openNextFile();
+	void init();
+	bool openNextFile();
 
 };
 
@@ -53,25 +53,25 @@ class MacRocketry_SD_Logger {
 
 MacRocketry_SD_Logger::MacRocketry_SD_Logger(void){ //constructor
 	init();
-	connectSD = SD.begin(SD_CS_Pin);      //initialize SD
-	connectFile = openNextFile();         //open file
-}
-
-MacRocketry_SD_Logger::MacRocketry_SD_Logger(String filePath){ //constructor
-	init();
-	connectSD = SD.begin(SD_CS_Pin);      //initialize SD
-	connectFile = openFile(filePath);         //open file
-
 }
 
 void MacRocketry_SD_Logger::init(void){ //initialize variables to null
 	connectSD = false;
 	connectFile = false;
-	
-	//variables for more efficient SD write
-	bufferSize = 0;
+	bufferSize = 0; //variables for more efficient SD write
 }
 
+void MacRocketry_SD_Logger::begin(void){
+	//similar to BMP code, there is a bug where SD.begin() cannot be called within a class contructor
+	//therefore, we have to call MacRocketry_SD_Logger::begin() inside main setup()
+	connectSD = SD.begin(SD_CS_Pin);      //initialize SD
+	connectFile = openNextFile();         //open file
+}
+
+void MacRocketry_SD_Logger::begin(String file){
+	connectSD = SD.begin(SD_CS_Pin);      //initialize SD
+	connectFile = openFile(file);         //open file
+}
 
 //getters and setters --------------------------------------------------
 uint16_t MacRocketry_SD_Logger::maxUInt(void)		{ return 0xffff; } //max 16-bit number
@@ -131,7 +131,7 @@ bool MacRocketry_SD_Logger::writeBuffer(String data){
 	
 	//write string with allowable space
 	bufferSize += bufferAllow; //update current buffer size
-	sdFile.print(data.substring(0, bufferAllow));
+	Serial.println(sdFile.print(data.substring(0, bufferAllow)));
 	
 	//process when buffer is full
 	if (Write_Buffer <= bufferSize){ //if buffer is full
@@ -142,8 +142,8 @@ bool MacRocketry_SD_Logger::writeBuffer(String data){
 		
 		//write the rest of the data
 		String remain = data.substring(bufferAllow);
-		sdFile.print(remain);         //print the rest of data
-		bufferSize = remain.length(); //reset buffer
+		Serial.println(sdFile.print(remain));   //print the rest of data
+		bufferSize = remain.length();           //reset buffer
 	}
 	return true;
 }
@@ -155,7 +155,9 @@ MacRocketry_SD_Logger sd;
 
 void setup() {
 	Serial.begin(115200);
-  while(!Serial);
+	while(!Serial);
+
+	sd.begin();
 
 	if (sd.getConnectSD()) Serial.println("SD recognized");
 	else Serial.println("no SD input");
@@ -170,7 +172,7 @@ int i = 0;
 void loop() {
   delay(100);
 	i++;
-	if (sd.writeBuffer("data_" + String(i) + "\r\n"))
+	if (sd.writeFile("data_" + String(i) + "\r\n"))
 		Serial.println(i);
 	else Serial.println("Cannot write " + String(i));
 }
